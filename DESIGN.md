@@ -196,3 +196,7 @@ Runtime categories appear as compact filter chips with an All default. Chips nev
 - **Don't** use accent colors as ambient decoration or large background washes.
 - **Don't** add external fonts, icon services, analytics, or tracking.
 - **Don't** turn the launcher into a monitoring dashboard with invented health metrics.
+
+### Location Filter and App Identity
+
+A separate wrapping location group offers All locations, On this server, and External. It composes with category and search; external means the runtime external state or route source, so local VNC and background services remain visible. Summary figures always describe the entire inventory. The generated home/server mark is a local PNG used in the masthead and browser icons; its neutral backing keeps the blue silhouette legible in both themes.

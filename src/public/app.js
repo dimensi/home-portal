@@ -1,3 +1,5 @@
+import { filterServices } from './service-filters.js';
+
 const serviceList = document.querySelector('#services');
 const statusLine = document.querySelector('#status');
 const updatedLine = document.querySelector('#updated');
@@ -5,6 +7,7 @@ const search = document.querySelector('#search');
 const refresh = document.querySelector('#refresh');
 const themeToggle = document.querySelector('#theme-toggle');
 const cardTemplate = document.querySelector('#service-card');
+const locationFilters = document.querySelector('#location-filters');
 const categoryFilters = document.querySelector('#category-filters');
 const serviceCount = document.querySelector('#service-count');
 const webCount = document.querySelector('#web-count');
@@ -12,6 +15,17 @@ const categoryCount = document.querySelector('#category-count');
 
 let services = [];
 let selectedCategory = 'All';
+let selectedLocation = 'all';
+
+locationFilters.addEventListener('click', (event) => {
+  const button = event.target.closest('[data-location]');
+  if (!button) return;
+  selectedLocation = button.dataset.location;
+  locationFilters.querySelectorAll('button').forEach((chip) => {
+    chip.setAttribute('aria-pressed', String(chip === button));
+  });
+  render();
+});
 
 const storedTheme = localStorage.getItem('theme');
 const preferredTheme = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
@@ -61,26 +75,20 @@ async function loadServices() {
 
 function render() {
   const needle = search.value.trim().toLowerCase();
-  const filtered = services
-    .filter((service) => selectedCategory === 'All' || service.category === selectedCategory)
-    .filter((service) =>
-      [service.name, service.containerName, service.category, service.image, service.state]
-        .join(' ')
-        .toLowerCase()
-        .includes(needle)
-    )
-    .sort(compareServices);
+  const filtered = filterServices(services, {
+    category: selectedCategory, location: selectedLocation, search: needle
+  }).sort(compareServices);
 
   serviceList.replaceChildren();
-  const hasFilter = selectedCategory !== 'All';
+  const hasFilter = selectedCategory !== 'All' || selectedLocation !== 'all';
   statusLine.textContent = needle || hasFilter
     ? `${filtered.length} of ${services.length} services shown`
     : `${services.length} service${services.length === 1 ? '' : 's'} available`;
 
   if (!filtered.length) {
     serviceList.append(createEmptyState(
-      needle ? 'No matching services' : 'No services found',
-      needle ? 'Try a service name, category, container, or image.' : 'Refresh after a service starts.'
+      needle || hasFilter ? 'No matching services' : 'No services found',
+      needle || hasFilter ? 'Try another location, category, or search.' : 'Refresh after a service starts.'
     ));
     return;
   }
