@@ -29,7 +29,7 @@ Configure these runtime variables in Coolify:
 | `DOCKER_HOSTNAME` | Hostname used for links derived from published Docker ports |
 | `PORTAL_BIND` | Complete Compose port mapping, for example `127.0.0.1:8088:8080` |
 
-Enable Coolify's source-commit injection for the application. Coolify provides `SOURCE_COMMIT` from the accepted webhook; Compose uses it both as the immutable GHCR image tag and as the revision returned by `/api/health`.
+Enable Coolify's source-commit injection for the application. Coolify provides `SOURCE_COMMIT` from the pinned deployment revision; Compose uses it both as the immutable GHCR image tag and as the revision returned by `/api/health`.
 
 The Compose file also mounts `/var/run/docker.sock` read-only, joins the external `web` network, listens on container port `8080`, and uses `/api/health` through the image health check.
 
@@ -41,25 +41,28 @@ Create a GitHub Environment named `production`, restrict its deployment branches
 
 | Secret | Value |
 | --- | --- |
-| `COOLIFY_WEBHOOK_URL` | Full URL of Coolify's manual GitHub webhook endpoint |
-| `COOLIFY_WEBHOOK_SECRET` | Application's manual GitHub webhook signing secret |
+| `COOLIFY_URL` | Coolify instance base URL |
+| `COOLIFY_TOKEN` | Shared pet-project CLI and CI API key |
+| `COOLIFY_APP_UUID` | This application's resource UUID |
 
-The workflow's deploy job references `environment: production`, so these secrets are available only to that job. Do not duplicate them as repository secrets. No manual approval is required for normal deployments.
+The workflow's deploy job references `environment: production`. Restrict this Environment to `main`, without required reviewers, and store deployment access only here rather than duplicating repository secrets. Keep the URL and application UUID separate from the token so each application's target remains explicit.
 
-Create a repository variable named `COOLIFY_DEPLOY_ENABLED`. Keep it set to `false` while bootstrapping the application: the workflow will test and publish the image but skip the deploy job. After checking the first package and Coolify configuration, set the variable to `true` and manually run `Build and Deploy` once. Future pushes to `main` will then deploy automatically.
+Create a repository variable named `COOLIFY_DEPLOY_ENABLED`. Keep it `false` while bootstrapping; after checking the first package and Coolify configuration, set it to `true` and run **Build and Deploy**. The deploy job's condition is evaluated before environment variables are available, so this switch stays at repository scope.
 
-Keep `COOLIFY_DEPLOY_ENABLED` at repository scope: the deploy job's `if` condition is evaluated before environment variables are available. Application runtime settings remain in Coolify; the GitHub Environment stores only deployment access.
+The workflow pins the application through `PATCH /api/v1/applications/<application-uuid>` with `git_commit_sha` set to the release SHA, then calls `POST /api/v1/deploy` with the application UUID. It waits for that native deployment, verifies its commit, and waits for `running:healthy`. Compose receives the same revision through `SOURCE_COMMIT` and pulls the matching immutable GHCR tag.
 
-The workflow signs the exact request body with HMAC-SHA256 and sends a GitHub-compatible `push` event after the image is published. It succeeds only when Coolify accepts exactly one deployment and returns its deployment UUID. This credential can trigger only the configured application; it cannot read or modify other Coolify resources.
+## Shared Coolify access
 
-Webhook acceptance means the deployment was queued. Check the Coolify deployment result and verify `/api/health` after the first release; the webhook does not grant the workflow broader read access for polling.
+The owner uses one existing API key for interactive CLI access and the pet-project CI workflows. It has only **read**, **write**, and **deploy** abilities, with expiry **Never**. This key grants access across those Coolify resources; keep it private and out of source code, logs, screenshots, issues, and chat.
 
-Save a password-manager item named **Home Portal / Coolify webhook** containing both values and a link to this runbook. The secret signs deployment requests; it is not a general Coolify API token. The endpoint can be shared by applications, while the signing secret and repository match restrict the target.
+Save the existing value in a Bitwarden item named **Home pet projects / Coolify CLI and CI**. Include the instance URL, abilities, expiry **Never**, the supported project list, and this runbook link. The private server handoff named `coolify-shared-access.json` identifies the same existing key; read it only in a trusted session. Do not create another key merely to configure the CLI or another authorized CI consumer.
 
-To rotate the secret, replace this application's manual GitHub webhook secret in Coolify and update `COOLIFY_WEBHOOK_SECRET` in the GitHub `production` Environment to the same value. Run **Build and Deploy**, then confirm the native deployment finishes and `/api/health` reports the expected commit.
+Use that value in the CLI's private instance configuration and in each authorized repository's **production** Environment as `COOLIFY_TOKEN`. Keep each repository's `COOLIFY_URL` and `COOLIFY_APP_UUID` separate. Production is restricted to `main` and needs no manual approver. Runtime application secrets and GHCR authorization remain independent.
+
+For rotation, create the replacement deliberately, update the private CLI configuration and every authorized production Environment, then run and verify each deployment. Revoke the previous key only after every consumer has succeeded. A successful queue response alone is insufficient: confirm the native deployment finishes, runtime is healthy, and the expected immutable revision is running.
 
 ## Protect production
 
-Protect `main` with the `CI / test` check if changes should be reviewed before release. Consider a GitHub environment with required reviewers if production deployments need a separate approval gate.
+Protect `main` with the `CI / test` check if changes should be reviewed before release. The production Environment permits only `main` and has no manual deployment approval gate.
 
 After the first deployment, verify the application health endpoint and load the dashboard through its configured ingress. Screenshot previews also need network access from the container to their target services.
