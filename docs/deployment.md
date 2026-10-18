@@ -41,11 +41,15 @@ Create a GitHub Environment named `production`, restrict its deployment branches
 
 | Secret | Value |
 | --- | --- |
-| `COOLIFY_URL` | Coolify instance base URL |
+| `COOLIFY_SSH_HOST` | SSH bastion hostname |
+| `COOLIFY_SSH_PORT` | SSH bastion port |
+| `COOLIFY_SSH_USER` | Existing deployment SSH account |
+| `COOLIFY_SSH_KEY` | Existing deployment SSH private key |
+| `COOLIFY_SSH_KNOWN_HOSTS` | Pinned SSH host-key entry for the bastion |
 | `COOLIFY_TOKEN` | Shared pet-project CLI and CI API key |
 | `COOLIFY_APP_UUID` | This application's resource UUID |
 
-The workflow's deploy job references `environment: production`. Restrict this Environment to `main`, without required reviewers, and store deployment access only here rather than duplicating repository secrets. Keep the URL and application UUID separate from the token so each application's target remains explicit.
+The workflow's deploy job references `environment: production`. Restrict this Environment to `main`, without required reviewers, and store deployment access only here rather than duplicating repository secrets. Keep the SSH connection settings and application UUID separate from the token so each application's target remains explicit. The deploy job opens a strict host-key-checked SSH forward on `127.0.0.1:18000`, calls Coolify through that loopback address, and always closes the tunnel and removes its temporary key material. The tunnel reuses the existing deployment SSH account and private key to forward to `127.0.0.1:8000`; it needs no additional VPN or SSH key.
 
 Create a repository variable named `COOLIFY_DEPLOY_ENABLED`. Keep it `false` while bootstrapping; after checking the first package and Coolify configuration, set it to `true` and run **Build and Deploy**. The deploy job's condition is evaluated before environment variables are available, so this switch stays at repository scope.
 
@@ -57,7 +61,7 @@ The owner reuses the unchanged existing CLI key (token ID `7`) for interactive C
 
 Save the existing value in a Bitwarden item named **Home pet projects / Coolify CLI and CI**. Include the instance URL, abilities, expiry **Never**, the supported project list, and this runbook link. The private server handoff named `coolify-shared-access.json` identifies the same existing key; read it only in a trusted session. Do not create another key merely to configure the CLI or another authorized CI consumer.
 
-Use that value in the CLI's private instance configuration and in each authorized repository's **production** Environment as `COOLIFY_TOKEN`. Keep each repository's `COOLIFY_URL` and `COOLIFY_APP_UUID` separate. Production is restricted to `main` and needs no manual approver. Runtime application secrets and GHCR authorization remain independent.
+Use that value in the CLI's private instance configuration and in each authorized repository's **production** Environment as `COOLIFY_TOKEN`. Keep each repository's SSH connection secrets and `COOLIFY_APP_UUID` separate. CI reaches the Coolify API through its SSH tunnel; the private instance URL remains part of interactive CLI configuration. Production is restricted to `main` and needs no manual approver. Runtime application secrets and GHCR authorization remain independent.
 
 For rotation, create the replacement deliberately, update the private CLI configuration and every authorized production Environment, then run and verify each deployment. Revoke the previous key only after every consumer has succeeded. A successful queue response alone is insufficient: confirm the native deployment finishes, runtime is healthy, and the expected immutable revision is running.
 
