@@ -164,8 +164,8 @@ Primary surfaces use gently curved 14px corners, compact controls use 12px, and 
 - **Corner Style:** Gently curved 14px surfaces.
 - **Background:** Theme surface with a one-pixel neutral border.
 - **Shadow Strategy:** Flat at rest; soft lift on hover.
-- **Internal Padding:** 18px below a 116–128px preview or identity field.
-- **State:** A compact high-contrast status chip overlays the art region. Preview failures fall back to generated service initials and signal geometry.
+- **Internal Padding:** 18px below a 150–160px service poster.
+- **State:** A compact high-contrast status chip overlays the art region. Poster failures fall back to service initials and signal geometry.
 
 ### Inputs / Fields
 
@@ -200,3 +200,7 @@ Runtime categories appear as compact filter chips with an All default. Chips nev
 ### Location Filter and App Identity
 
 A separate wrapping location group offers All locations, On this server, and External. It composes with category and search; external means the runtime external state or route source, so local VNC and background services remain visible. Summary figures always describe the entire inventory. The generated home/server mark is a local PNG used in the masthead and browser icons; its neutral backing keeps the blue silhouette legible in both themes.
+
+### Service Posters
+
+Each recognized service has a distinct local WebP poster: tactile miniature objects, charcoal/navy backdrops, paper and brushed metal, and directional studio light. Their central composition survives the card crop. Unknown services use a shared server-cabinet poster. Artwork is decorative and never supplies service facts. Runtime favicons retain service identity; live screenshot APIs remain available but cards do not request them. Poster selection uses only public brand patterns from runtime name, container name, and image, with specific brands before host labels.

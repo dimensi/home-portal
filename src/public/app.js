@@ -1,4 +1,5 @@
 import { filterServices } from './service-filters.js';
+import { getServicePoster } from './service-posters.js?v=20261019-posters1';
 
 const serviceList = document.querySelector('#services');
 const statusLine = document.querySelector('#status');
@@ -112,24 +113,25 @@ function renderCard(service) {
   card.querySelector('.category').textContent = service.category || 'Service';
   card.querySelector('.route').textContent = formatRoute(service);
 
+  addPosterImage(card, service);
+
   const link = card.querySelector('.open');
   if (service.url) {
     link.href = service.url;
     link.setAttribute('aria-label', `Open ${service.name}`);
-    if (service.preview === 'screenshot') addPreviewImage(card, service);
   } else {
     link.remove();
   }
   return card;
 }
 
-function addPreviewImage(card, service) {
+function addPosterImage(card, service) {
   const image = document.createElement('img');
-  image.className = 'preview-image';
+  image.className = 'poster-image';
   image.alt = '';
   image.loading = 'lazy';
   image.decoding = 'async';
-  image.src = `/api/preview/${encodeURIComponent(service.id)}`;
+  image.src = getServicePoster(service);
   image.addEventListener('error', () => image.remove(), { once: true });
   card.querySelector('.art').prepend(image);
 }

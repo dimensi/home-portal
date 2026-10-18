@@ -155,14 +155,14 @@ h1 { max-width: 760px; margin: 0; font-size: 2.25rem; font-weight: 740; letter-s
 
 .card { min-width: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); transition: border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease; }
 .card:hover { border-color: var(--line-strong); transform: translateY(-2px); box-shadow: var(--shadow); }
-.art { position: relative; height: 128px; overflow: hidden; background: color-mix(in srgb, var(--service-accent) 12%, var(--surface-raised)); }
+.art { position: relative; height: 160px; overflow: hidden; background: color-mix(in srgb, var(--service-accent) 12%, var(--surface-raised)); }
 .art::after { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 45%, rgba(6, 8, 12, 0.34)); content: ""; pointer-events: none; }
 .art-fallback { position: absolute; inset: 0; display: grid; place-items: center; }
 .art-fallback::before, .art-fallback::after { position: absolute; content: ""; }
 .art-fallback::before { width: 86px; height: 50px; border: 1px solid color-mix(in srgb, var(--service-accent) 38%, var(--line)); border-radius: 12px; }
 .art-fallback::after { width: 48px; height: 1px; background: color-mix(in srgb, var(--service-accent) 52%, var(--line)); box-shadow: 0 -12px 0 color-mix(in srgb, var(--service-accent) 30%, var(--line)), 0 12px 0 color-mix(in srgb, var(--service-accent) 30%, var(--line)); }
 .art-fallback .service-initials { z-index: 1; padding: 0 8px; background: color-mix(in srgb, var(--service-accent) 10%, var(--surface-raised)); color: color-mix(in srgb, var(--service-accent) 76%, var(--text)); font-size: 0.73rem; font-weight: 800; letter-spacing: 0.08em; }
-.preview-image { position: absolute; z-index: 1; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.poster-image { position: absolute; z-index: 1; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .state { position: absolute; z-index: 3; top: 12px; right: 12px; max-width: calc(100% - 24px); overflow: hidden; padding: 4px 9px; border: 1px solid rgba(255,255,255,0.18); border-radius: 999px; background: rgba(12, 15, 20, 0.76); color: #f7f9fb; font-size: 0.68rem; font-weight: 700; line-height: 1.3; text-overflow: ellipsis; white-space: nowrap; }
 .state::before { display: inline-block; width: 6px; height: 6px; margin-right: 6px; border-radius: 50%; background: var(--success); content: ""; vertical-align: 1px; }
 .card[data-state="external"] .state::before { background: var(--accent); }
@@ -220,7 +220,7 @@ footer { display: flex; min-height: 100px; align-items: center; justify-content:
   .updated { display: none; }
   .filter-chip { min-height: 44px; padding-inline: 15px; }
   .grid { grid-template-columns: 1fr; }
-  .art { height: 116px; }
+  .art { height: 150px; }
   .skeleton { height: 276px; }
   footer { min-height: 82px; margin-top: 54px; }
   footer span:last-child { display: none; }
