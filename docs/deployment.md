@@ -53,7 +53,7 @@ The workflow pins the application through `PATCH /api/v1/applications/<applicati
 
 ## Shared Coolify access
 
-The owner uses one existing API key for interactive CLI access and the pet-project CI workflows. It has only **read**, **write**, and **deploy** abilities, with expiry **Never**. This key grants access across those Coolify resources; keep it private and out of source code, logs, screenshots, issues, and chat.
+The owner reuses the unchanged existing CLI key (token ID `7`) for interactive CLI access and the pet-project CI workflows. It has only **read**, **write**, and **deploy** abilities, with expiry **Never**. This key grants access across those Coolify resources; keep it private and out of source code, logs, screenshots, issues, and chat.
 
 Save the existing value in a Bitwarden item named **Home pet projects / Coolify CLI and CI**. Include the instance URL, abilities, expiry **Never**, the supported project list, and this runbook link. The private server handoff named `coolify-shared-access.json` identifies the same existing key; read it only in a trusted session. Do not create another key merely to configure the CLI or another authorized CI consumer.
 
@@ -63,6 +63,6 @@ For rotation, create the replacement deliberately, update the private CLI config
 
 ## Protect production
 
-Protect `main` with the `CI / test` check if changes should be reviewed before release. The production Environment permits only `main` and has no manual deployment approval gate.
+Protect `main` with the existing build and test checks if changes should be reviewed before release. The production Environment permits only `main` and has no manual deployment approval gate.
 
 After the first deployment, verify the application health endpoint and load the dashboard through its configured ingress. Screenshot previews also need network access from the container to their target services.
