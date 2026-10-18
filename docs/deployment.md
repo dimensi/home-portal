@@ -41,7 +41,7 @@ Add these repository secrets:
 
 | Secret | Value |
 | --- | --- |
-| `COOLIFY_WEBHOOK_URL` | Full application-scoped manual GitHub webhook URL |
+| `COOLIFY_WEBHOOK_URL` | Full URL of Coolify's manual GitHub webhook endpoint |
 | `COOLIFY_WEBHOOK_SECRET` | Application's manual GitHub webhook signing secret |
 
 Create a repository variable named `COOLIFY_DEPLOY_ENABLED`. Keep it set to `false` while bootstrapping the application: the workflow will test and publish the image but skip the deploy job. After checking the first package and Coolify configuration, set the variable to `true` and manually run `Build and Deploy` once. Future pushes to `main` will then deploy automatically.
@@ -49,6 +49,10 @@ Create a repository variable named `COOLIFY_DEPLOY_ENABLED`. Keep it set to `fal
 The workflow signs the exact request body with HMAC-SHA256 and sends a GitHub-compatible `push` event after the image is published. It succeeds only when Coolify accepts exactly one deployment and returns its deployment UUID. This credential can trigger only the configured application; it cannot read or modify other Coolify resources.
 
 Webhook acceptance means the deployment was queued. Check the Coolify deployment result and verify `/api/health` after the first release; the webhook does not grant the workflow broader read access for polling.
+
+Save a password-manager item named **Home Portal / Coolify webhook** containing both values and a link to this runbook. The secret signs deployment requests; it is not a general Coolify API token. The endpoint can be shared by applications, while the signing secret and repository match restrict the target.
+
+To rotate the secret, replace this application's manual GitHub webhook secret in Coolify and update `COOLIFY_WEBHOOK_SECRET` in GitHub to the same value. Run **Build and Deploy**, then confirm the native deployment finishes and `/api/health` reports the expected commit.
 
 ## Protect production
 
