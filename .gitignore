@@ -1,0 +1,16 @@
+node_modules/
+coverage/
+.env
+.env.*
+!.env.example
+.DS_Store
+npm-debug.log*
+
+# Runtime inventory can contain private hosts and service names.
+services.json
+config/services.json
+config/Caddyfile
+
+# Local Compose overrides commonly contain host-specific mount paths.
+compose.override.yml
+docker-compose.override.yml

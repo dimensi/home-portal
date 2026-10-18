@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="dark light">
+    <meta name="theme-color" content="#0c0e12">
+    <title>Home Portal</title>
+    <link rel="stylesheet" href="/styles.css?v=20261018-portal2">
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="masthead">
+        <a class="brand" href="/" aria-label="Home Portal">
+          <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+            <path d="M5.5 7.5h21v17h-21zM10 12h4v4h-4zM18 12h4v4h-4zM10 20h12"/>
+          </svg>
+          <span>Home Portal</span>
+        </a>
+        <div class="masthead-actions">
+          <span class="connection"><span class="connection-dot" aria-hidden="true"></span>Live inventory</span>
+          <button class="icon-button" id="theme-toggle" type="button" aria-label="Switch to light theme" title="Switch theme">
+            <svg class="theme-dark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6 7 7M17 17l1.4 1.4M18.4 5.6 17 7M7 17l-1.4 1.4M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z"/></svg>
+            <svg class="theme-light" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 15.3A8.5 8.5 0 0 1 8.7 4a8.5 8.5 0 1 0 11.3 11.3Z"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <main>
+        <section class="intro" aria-labelledby="page-title">
+          <div>
+            <h1 id="page-title">Service directory</h1>
+            <p class="intro-copy">Search, check status, and open anything running on this server.</p>
+          </div>
+          <div class="inventory-summary" aria-label="Inventory summary">
+            <div class="summary-item"><strong id="service-count">—</strong><span>Services</span></div>
+            <div class="summary-item"><strong id="web-count">—</strong><span>Web apps</span></div>
+            <div class="summary-item"><strong id="category-count">—</strong><span>Groups</span></div>
+          </div>
+        </section>
+
+        <section class="toolbar" aria-label="Service controls">
+          <label class="search">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg>
+            <span class="sr-only">Search services</span>
+            <input id="search" type="search" placeholder="Search services" autocomplete="off" spellcheck="false">
+            <kbd aria-hidden="true">/</kbd>
+          </label>
+          <button class="refresh" id="refresh" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5M6.1 9a7 7 0 0 1 11.5-2.4L20 9M4 15l2.4 2.4A7 7 0 0 0 17.9 15"/></svg>
+            <span>Refresh</span>
+          </button>
+        </section>
+
+        <div class="category-filters" id="category-filters" aria-label="Filter by category"></div>
+
+        <div class="status-row">
+          <p class="status-line" id="status" aria-live="polite">Loading live inventory…</p>
+          <p class="updated" id="updated"></p>
+        </div>
+
+        <section class="service-list grid" id="services" aria-label="Docker services" aria-busy="true">
+          <div class="skeleton" aria-hidden="true"></div><div class="skeleton" aria-hidden="true"></div><div class="skeleton" aria-hidden="true"></div>
+        </section>
+      </main>
+
+      <footer><span>Home Portal</span><span>Refreshes every minute</span></footer>
+    </div>
+
+    <template id="service-card">
+      <article class="card">
+        <div class="art" aria-hidden="true">
+          <div class="art-fallback"><span class="service-initials"></span></div>
+          <span class="state"></span>
+        </div>
+        <div class="card-body">
+          <div class="identity">
+            <div class="service-icon"><span class="service-initials"></span></div>
+            <div class="title-stack"><h3></h3><p class="metadata-title"></p></div>
+          </div>
+          <p class="details"></p>
+          <div class="card-footer">
+            <div class="card-meta"><span class="category"></span><span class="route"></span></div>
+            <a class="open" target="_blank" rel="noreferrer">
+              <span>Open</span>
+              <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 13 13 7M8 7h5v5"/></svg>
+            </a>
+          </div>
+        </div>
+      </article>
+    </template>
+
+    <script type="module" src="/app.js?v=20261018-portal2"></script>
+  </body>
+</html>

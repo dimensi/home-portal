@@ -1,0 +1,23 @@
+{
+  "catalog": [
+    {
+      "match": ["example/dashboard"],
+      "name": "Example Dashboard",
+      "category": "Tools",
+      "accent": "#7c5cff",
+      "artwork": "generic",
+      "preview": "metadata"
+    }
+  ],
+  "services": [
+    {
+      "id": "example-router",
+      "name": "Router",
+      "category": "Network",
+      "url": "https://router.example.test",
+      "accent": "#5b8def",
+      "artwork": "generic",
+      "preview": "metadata"
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+services:
+  home-portal:
+    image: ghcr.io/${IMAGE_OWNER:-example}/home-portal:${SOURCE_COMMIT:-latest}
+    container_name: home-portal
+    restart: unless-stopped
+    init: true
+    environment:
+      PORT: "8080"
+      DOCKER_HOSTNAME: ${DOCKER_HOSTNAME:-localhost}
+      CADDYFILE_PATH: /config/Caddyfile
+      EXTERNAL_SERVICES_PATH: /config/services.json
+      DEPLOYED_COMMIT: ${SOURCE_COMMIT:-local}
+      PREVIEW_TTL_MS: ${PREVIEW_TTL_MS:-1200000}
+      METADATA_TTL_MS: ${METADATA_TTL_MS:-3600000}
+      PREVIEW_NAVIGATION_TIMEOUT_MS: ${PREVIEW_NAVIGATION_TIMEOUT_MS:-10000}
+      METADATA_TIMEOUT_MS: ${METADATA_TIMEOUT_MS:-5000}
+    ports:
+      - "${PORTAL_BIND:-127.0.0.1:8088:8080}"
+    extra_hosts:
+      - "${HOME_HOST_ENTRY:-home-host.local:127.0.0.1}"
+      - "${NAS_HOST_ENTRY:-storage-host.local:127.0.0.1}"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ${CADDY_CONFIG_PATH:-./config/Caddyfile.example}:/config/Caddyfile:ro
+      - ${SERVICES_CONFIG_PATH:-./config/services.example.json}:/config/services.json:ro
+    networks:
+      - web
+
+networks:
+  web:
+    external: true
+    name: ${HOME_PORTAL_NETWORK:-web}

@@ -1,0 +1,18 @@
+{
+  "name": "home-portal",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "dockerode": "^5.0.1",
+    "express": "^4.19.2",
+    "playwright": "1.55.1"
+  },
+  "devDependencies": {
+    "vitest": "^5.0.5"
+  }
+}
