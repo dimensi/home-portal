@@ -66,6 +66,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build
+    environment: production
     if: ${{ vars.COOLIFY_DEPLOY_ENABLED == 'true' }}
     permissions:
       contents: read

@@ -37,14 +37,18 @@ Attach the application to any Docker networks required to reach the services it 
 
 ## GitHub Actions secrets
 
-Add these repository secrets:
+Create a GitHub Environment named `production`, restrict its deployment branches to `main`, and add these environment secrets under **Settings → Environments → production**:
 
 | Secret | Value |
 | --- | --- |
 | `COOLIFY_WEBHOOK_URL` | Full URL of Coolify's manual GitHub webhook endpoint |
 | `COOLIFY_WEBHOOK_SECRET` | Application's manual GitHub webhook signing secret |
 
+The workflow's deploy job references `environment: production`, so these secrets are available only to that job. Do not duplicate them as repository secrets. No manual approval is required for normal deployments.
+
 Create a repository variable named `COOLIFY_DEPLOY_ENABLED`. Keep it set to `false` while bootstrapping the application: the workflow will test and publish the image but skip the deploy job. After checking the first package and Coolify configuration, set the variable to `true` and manually run `Build and Deploy` once. Future pushes to `main` will then deploy automatically.
+
+Keep `COOLIFY_DEPLOY_ENABLED` at repository scope: the deploy job's `if` condition is evaluated before environment variables are available. Application runtime settings remain in Coolify; the GitHub Environment stores only deployment access.
 
 The workflow signs the exact request body with HMAC-SHA256 and sends a GitHub-compatible `push` event after the image is published. It succeeds only when Coolify accepts exactly one deployment and returns its deployment UUID. This credential can trigger only the configured application; it cannot read or modify other Coolify resources.
 
@@ -52,7 +56,7 @@ Webhook acceptance means the deployment was queued. Check the Coolify deployment
 
 Save a password-manager item named **Home Portal / Coolify webhook** containing both values and a link to this runbook. The secret signs deployment requests; it is not a general Coolify API token. The endpoint can be shared by applications, while the signing secret and repository match restrict the target.
 
-To rotate the secret, replace this application's manual GitHub webhook secret in Coolify and update `COOLIFY_WEBHOOK_SECRET` in GitHub to the same value. Run **Build and Deploy**, then confirm the native deployment finishes and `/api/health` reports the expected commit.
+To rotate the secret, replace this application's manual GitHub webhook secret in Coolify and update `COOLIFY_WEBHOOK_SECRET` in the GitHub `production` Environment to the same value. Run **Build and Deploy**, then confirm the native deployment finishes and `/api/health` reports the expected commit.
 
 ## Protect production
 
